@@ -8,7 +8,7 @@ function setup()
   createCanvas(110*10, 110*10);
 
   bfsSetup(src);
-  frameRate(150);
+  frameRate(1);
 }
 
 function arrayEqual(a,b)
@@ -32,9 +32,12 @@ function draw()
   if(queue.length!==0)
   {
     background(52);
-    var tarState = new PuzzleState(target);
-    tarState.render(100,100,50,0);
-     
+  //  var tarState = new PuzzleState(target);
+  //  tarState.render(100,100,50,0);
+  fill(255);
+  textSize(30);
+  textAlign(LEFT,CENTER);
+  text("Queue size : "+queue.length+" BFS Iteration :"+it, 25, 55);
     for(var j=0;j<min(10,queue.length);j++)
     {
       var top = queue[j];
@@ -51,8 +54,10 @@ function draw()
   }
   if(isVisted(queue[0],target))
     noLoop();
-  else
+  else{
+    it++;
     bfsStep();
+  }
 }
 
 
