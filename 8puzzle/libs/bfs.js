@@ -1,8 +1,9 @@
 var queue = [];
-
+var stepNumber;
 function bfsSetup(src)
 {
   queue = [];
+  stepNumber = 0;
   queue.push([src.slice()]);
 }
 
@@ -38,7 +39,7 @@ function isVisted(prevNodes,newNode)
 }
 function bfsStep()
 {
-
+  stepNumber++;
   var top = queue[0];
   //console.log(top);
   queue.shift();

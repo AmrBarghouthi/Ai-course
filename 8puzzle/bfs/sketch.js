@@ -2,11 +2,11 @@
 var state;
 var src =    [2,8,3,1,6,4,7,0,5];
 var target = [1,2,3,8,0,4,7,6,5];
-
+var autoComplete = false;
 function setup()
 {
-  createCanvas(110*10, 110*10);
-
+  var cnv = createCanvas(110*10, 110*10);
+  cnv.parent('sketch-holder');
   bfsSetup(src);
   frameRate(1);
 }
@@ -24,7 +24,8 @@ function arrayEqual(a,b)
 
   return true;
 }
-var it = 0;
+
+
 function draw()
 {
 
@@ -37,7 +38,9 @@ function draw()
   fill(255);
   textSize(30);
   textAlign(LEFT,CENTER);
-  text("Queue size : "+queue.length+" BFS Iteration :"+it, 25, 55);
+
+//  button.mousePressed(greet);
+    text("Queue size : "+queue.length+" BFS Iteration : "+stepNumber, 25, 55);
     for(var j=0;j<min(10,queue.length);j++)
     {
       var top = queue[j];
@@ -55,8 +58,11 @@ function draw()
   if(isVisted(queue[0],target))
     noLoop();
   else{
-    it++;
+    //it++;
+    if(autoComplete)
+    {
     bfsStep();
+    }
   }
 }
 
