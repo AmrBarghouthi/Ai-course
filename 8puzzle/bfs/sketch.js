@@ -25,7 +25,14 @@ function arrayEqual(a,b)
   return true;
 }
 
+var fr = 50;
+function changeFrameRate()
+{
 
+  var fr=  document.getElementById('fr').value;
+  //console.log(fr);
+  frameRate(float(fr));
+}
 function draw()
 {
 
