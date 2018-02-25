@@ -1,15 +1,14 @@
 
 var state;
-var src = [];
-var target = [];
+var src =    [2,8,3,1,6,4,7,0,5];
+var target = [1,2,3,8,0,4,7,6,5];
 
 function setup()
 {
- createCanvas(110*10, 110*10);
-  src = [1,2,3,4,5,6,7,8,0];
-  target = [];
+  createCanvas(110*10, 110*10);
+
   bfsSetup(src);
-  frameRate(1);
+  frameRate(150);
 }
 
 function arrayEqual(a,b)
@@ -17,7 +16,7 @@ function arrayEqual(a,b)
   if(a.length == b.length)
   {
     for(var i=0;i<a.length;i++)
-      if(a[i]!==b[i])
+      if(a[i]!=b[i])
         return false;
   }
   else
@@ -25,24 +24,35 @@ function arrayEqual(a,b)
 
   return true;
 }
-
+var it = 0;
 function draw()
 {
-  background(52);
+
 
   if(queue.length!==0)
   {
-
-    for(var j=0;j<queue.length;j++)
+    background(52);
+    var tarState = new PuzzleState(target);
+    tarState.render(100,100,50,0);
+     
+    for(var j=0;j<min(10,queue.length);j++)
     {
       var top = queue[j];
-      for(var i=0;i<top.length;i++)
+      fill(255);
+      textSize(30);
+      textAlign(CENTER,CENTER);
+      text(j, 25, 165+110*j);
+      for(var i=0;i<min(10,top.length);i++)
       {
         var temp = new PuzzleState(top[i]);
-        temp.render(100,100,110*j,i*110);
+        temp.render(100,100,50+110*i,j*110+110);
       }
-    //  bfsStep();
+
   }
+  if(isVisted(queue[0],target))
+    noLoop();
+  else
+    bfsStep();
 }
 
 

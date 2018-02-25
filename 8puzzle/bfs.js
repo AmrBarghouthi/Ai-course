@@ -1,19 +1,9 @@
 var queue = [];
-function bfsNode(data,x,y)
-{
 
-    this.grid = new PuzzleState(data);
-    this.x = x;
-    this.y = y;
-    this.render = function() {
-        this.grid.render(x,y);
-
-    }
-}
 function bfsSetup(src)
 {
   queue = [];
-  queue.push(src);
+  queue.push([src.slice()]);
 }
 
 function bfs(src,target)
@@ -23,8 +13,10 @@ function bfs(src,target)
     {
         console.log(queue);
         var top = queue[0].slice();
-        if(arrayEqual(top[top.length-1],target))
+        if(arrayEqual(top[0],target)){
+          queue = [];
           return top;
+        }
         bfsStep();
 
     }
@@ -36,17 +28,22 @@ function isVisted(prevNodes,newNode)
 {
   for(var i=0;i<prevNodes.length;i++)
      if(arrayEqual(prevNodes[i],newNode))
+     {
+    //   console.log(prevNodes);
+    //   console.log(newNode);
+       //noLoop();
       return true;
+    }
   return false;
 }
 function bfsStep()
 {
 
   var top = queue[0];
-  console.log(top);
+  //console.log(top);
   queue.shift();
   //console.log(top);
-  var currentState = new PuzzleState(top[top.length-1]);
+  var currentState = new PuzzleState(top[0]);
   var left  = currentState.moveLeft();
   var right = currentState.moveRight();
   var up    = currentState.moveUp();
@@ -57,7 +54,7 @@ function bfsStep()
     if(!isVisted(top,left))
     {
       temp.unshift(left);
-      queue.unshift(temp);
+      queue.push(temp.slice());
     }
 // console.log(queue);
   var temp = top.slice();
@@ -65,7 +62,7 @@ function bfsStep()
     if(!isVisted(top,right))
     {
       temp.unshift(right);
-      queue.unshift(temp);
+      queue.push(temp.slice());
     }
 
   var temp = top.slice();
@@ -73,7 +70,7 @@ function bfsStep()
     if(!isVisted(top,up))
     {
       temp.unshift(up);
-      queue.unshift(temp);
+      queue.push(temp.slice());
     }
 
   var temp = top.slice();
@@ -81,6 +78,6 @@ function bfsStep()
     if(!isVisted(top,down))
     {
       temp.unshift(down);
-      queue.unshift(temp);
+      queue.push(temp.slice());
     }
 }
