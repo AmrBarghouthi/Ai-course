@@ -40,7 +40,7 @@ function setup() {
 		 b.addEdge(a,c);
 
 	}
-	
+	dfs(getNodeFromName('S'),[],0,150,0,windowWidth);
 }
 function renderNode(name,x,y,cost)
 {
@@ -76,8 +76,8 @@ function renderLine(x1,y1,x2,y2) {
 let target = getNodeFromName('T');
 function dfs(node,path,cost,y,xMin,xMax,perX,perY)
 {
-	//if(cost>bestCost)
-	//	return false;
+	if(cost>bestCost)
+		return false;
 	let valid = [];
 	if(perX!= null && perY != null)
 		renderLine(xMin+(xMax-xMin)/2,y,perX,perY);
