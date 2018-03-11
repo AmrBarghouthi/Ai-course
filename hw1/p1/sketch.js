@@ -38,6 +38,7 @@ function renderNode(name,x,y)
  	fill(190);
 	noStroke();
 	ellipse(x, y, nodeRadius, nodeRadius);
+	textSize(32);
 	textAlign(CENTER,CENTER);
 	fill(0);
 	text(name,x,y)

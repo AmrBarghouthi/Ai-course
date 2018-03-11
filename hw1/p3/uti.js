@@ -22,8 +22,15 @@ class edge {
 }
 class aStarNode {
 
-  constructor(node,aStarCost) {
+  constructor(node,aStarCost,acummcost,path,xMin,xMax,y,preX,preY) {
       this.node = node;
       this.aStarCost = aStarCost;
-  }
+      this.acummCost = acummcost;
+      this.path = path;
+      this.renderXMin = xMin;
+      this.renderXMax = xMax;
+      this.renderY = y;
+      this.preX = preX;
+      this.preY = preY;
+    }
 }

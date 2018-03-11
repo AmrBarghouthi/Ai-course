@@ -16,7 +16,7 @@ let edges = [['S','A',2],
 						['K','T',7],
 						['L','T',5]];
 
-
+let queue = [];
 let nodes = [
 	['S',10],
 	['A',6],
@@ -29,7 +29,7 @@ let nodes = [
 	['J',3],
 	['K',100],
 	['L',4],
-	['T',0],
+	['T',0]
 
 ];
 function getNodeFromName(name)
@@ -37,47 +37,55 @@ function getNodeFromName(name)
 	for(let i=0;i<graph.length;i++)
 		if(graph[i].name == name)
 			return graph[i];
+//	console.log("node not found "+name);
 	graph.push(new node(name,Infinity));
 	return graph[graph.length-1];
 }
-let bestCost=Infinity;
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	background(52);
-	for(let i=0;i<nodes.legnth;i++)
+	for(let i=0;i<nodes.length;i++)
 	{
-		graph.push(new node(nodes[0],nodes[1]));
+
+		graph.push(new node(nodes[i][0],nodes[i][1]));
 	}
-	for(let i=0;i<edges.length;i++)
+ for(let i=0;i<edges.length;i++)
 	{
+	//	console.log(edges[i]);
 		 let a = getNodeFromName(edges[i][0]);
 		 let b = getNodeFromName(edges[i][1]);
-		 let c = edges[i][2];
+		let c = edges[i][2];
 		 a.addEdge(b,c);
 		 b.addEdge(a,c);
 
 	}
-	dfs(getNodeFromName('S'),[],0,nodeRadius,0,windowWidth,null,null);
+	target =  getNodeFromName('T');
+ 	//aStar();
+	frameRate(1);
+	aStarSetup();
+	//noLoop();
 }
-function renderNode(name,x,y,cost)
+function renderNode(name,x,y,cost,aStarCost,mode)
 {
-	if(cost>bestCost)
- 		fill('rgb(255,0,0)');
+	if(mode == "new")
+		fill(190);
 	else
-	 	fill(255);
-
+		fill('rgb(255,0,0)')
 	noStroke();
 	ellipse(x, y, nodeRadius, nodeRadius);
 	textAlign(CENTER,CENTER);
 	textSize(64);
 	fill(0);
 	text(name,x,y)
-	fill('rgb(0,255,0)')
-	textAlign(LEFT,CENTER);
-	text(str(cost),x+nodeRadius/2+2,y);
-	fill('rgb(0,0,255)');
-	textAlign(RIGHT,CENTER);
-	text(str(bestCost),x-nodeRadius/2-15,y )
+	if(mode == "new")
+	{
+		fill('rgb(0,255,0)')
+		textAlign(LEFT,CENTER);
+		text(str(cost),x+nodeRadius/2+2,y);
+		fill('rgb(0,0,255)');
+		textAlign(RIGHT,CENTER);
+		text(str(aStarCost),x-nodeRadius/2-15,y );
+	}
 
 }
 function renderLine(x1,y1,x2,y2) {
@@ -90,43 +98,83 @@ function renderLine(x1,y1,x2,y2) {
 	d= d-nodeRadius/2;
 	line(x1,y1,x1-vx*d,y1-vy*d);
 }
-let target = getNodeFromName('T');
-function dfs(node,path,cost,y,xMin,xMax,perX,perY)
+let target = null;
+let done = false;
+function aStar()
 {
-	//if(cost>bestCost)
-	//	return false;
+	aStarSetup();
+	while(queue.length !=0 && !done)
+	{
+		aStarIt();
+	}
+}
+function aStarSetup()
+{
+	let firstNode = getNodeFromName('S');
+
+	queue.push(new aStarNode(firstNode,firstNode.heru,0,[],0,windowWidth,250));
+	let top = queue[0];
+	let xMin = top.renderXMin;
+	let xMax = top.renderXMax;
+	let y = top.renderY;
+	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,"new");
+}
+function aStarIt()
+{
+	queue.sort(aStarComp);
+
+	let top = queue[0];
+	let xMin = top.renderXMin;
+	let xMax = top.renderXMax;
+	let y = top.renderY;
+	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,"vis");
+
+	if(top.node == target){
+		done = true;
+		return;
+	}
+	queue.shift();
 	let valid = [];
-	if(perX!= null && perY != null)
-		renderLine(xMin+(xMax-xMin)/2,y,perX,perY);
-	renderNode(node.name,xMin+(xMax-xMin)/2,y,cost);
+	for (var i = 0; i < top.node.edges.length; i++) {
+		if(!isVisted(top.path,top.node.edges[i].to))
+		{
+			let edge = top.node.edges[i];
+			let acummCost = top.acummCost+edge.cost;
+			let aStarCost = acummCost+edge.to.heru;
+			let path = top.path.slice();
+			path.push(top.node);
+			valid.push(new aStarNode(edge.to,aStarCost,acummCost,path));
 
-	if(node == target)
-	{
-		bestCost = cost<bestCost?cost:bestCost;
-		return true;
-	}
-	for(let i=0;i<node.edges.length;i++)
-	{
-
-		let newNode = node.edges[i].to;
-		if(!path.includes(newNode))
-			valid.push(node.edges[i]);
+		}
 	}
 
-	sort(valid);
-	path.push(node);
 	let subTreeWidth = (xMax-xMin)/valid.length;
-	for(let i=0;i<valid.length;i++)
-	{
+	for (var i = 0; i < valid.length; i++) {
+		let added = valid[i];
+		added.renderXMin = xMin+i*subTreeWidth;
+		added.renderXMax = xMin+(i+1)*subTreeWidth;
+		added.renderY = y+250;
+		added.preX = xMin+(xMax-xMin)/2;
+		added.preY = y;
+		queue.push(added);
 
-		let newCost = cost+valid[i].cost;
-		let ret  = dfs(valid[i].to,path.slice(),newCost,y+250,xMin+subTreeWidth*i,xMin+subTreeWidth*(i+1),xMin+(xMax-xMin)/2,y);
-		//if(ret)
-			//return true;
+		renderLine(added.renderXMin +(added.renderXMax-added.renderXMin)/2,added.renderY,added.preX,added.preY);
+		renderNode(added.node.name,added.renderXMin+(added.renderXMax-added.renderXMin)/2,added.renderY,added.acummCost,added.aStarCost,"new");
+	}
+}
+function isVisted(path,node)
+{
+	for (var i = 0; i < path.length; i++) {
+		if(path[i].name ==node.name)
+			return true;
 	}
 	return false;
 }
-
+function aStarComp (a,b)
+{
+ 	return a.aStarCost-b.aStarCost;
+}
 function draw() {
 	//background(52);
+	aStarIt();
 }
