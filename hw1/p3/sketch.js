@@ -1,6 +1,5 @@
 let graph = [];
 
-let n = 27;
 let nodeRadius = 150;
 let edges = [['S','A',2],
 						['S','B',10],
@@ -32,6 +31,7 @@ let nodes = [
 	['T',0]
 
 ];
+let expanded = 0;
 function getNodeFromName(name)
 {
 	for(let i=0;i<graph.length;i++)
@@ -65,39 +65,8 @@ function setup() {
 	aStarSetup();
 	//noLoop();
 }
-function renderNode(name,x,y,cost,aStarCost,mode)
-{
-	if(mode == "new")
-		fill(190);
-	else
-		fill('rgb(255,0,0)')
-	noStroke();
-	ellipse(x, y, nodeRadius, nodeRadius);
-	textAlign(CENTER,CENTER);
-	textSize(64);
-	fill(0);
-	text(name,x,y)
-	if(mode == "new")
-	{
-		fill('rgb(0,255,0)')
-		textAlign(LEFT,CENTER);
-		text(str(cost),x+nodeRadius/2+2,y);
-		fill('rgb(0,0,255)');
-		textAlign(RIGHT,CENTER);
-		text(str(aStarCost),x-nodeRadius/2-15,y );
-	}
 
-}
-function renderLine(x1,y1,x2,y2) {
 
-	strokeWeight(5);
-	stroke(255);
-	let d = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-	let vx = (x1-x2)/d;
-	let vy = (y1-y2)/d;
-	d= d-nodeRadius/2;
-	line(x1,y1,x1-vx*d,y1-vy*d);
-}
 let target = null;
 let done = false;
 function aStar()
@@ -117,7 +86,7 @@ function aStarSetup()
 	let xMin = top.renderXMin;
 	let xMax = top.renderXMax;
 	let y = top.renderY;
-	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,"new");
+	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,0,"new");
 }
 function aStarIt()
 {
@@ -127,10 +96,11 @@ function aStarIt()
 	let xMin = top.renderXMin;
 	let xMax = top.renderXMax;
 	let y = top.renderY;
-	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,"vis");
-
+	expanded++;
+	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,expanded,"vis");
 	if(top.node == target){
 		done = true;
+		noLoop();
 		return;
 	}
 	queue.shift();
@@ -153,14 +123,16 @@ function aStarIt()
 		let added = valid[i];
 		added.renderXMin = xMin+i*subTreeWidth;
 		added.renderXMax = xMin+(i+1)*subTreeWidth;
-		added.renderY = y+250;
+		added.renderY = y+500;
 		added.preX = xMin+(xMax-xMin)/2;
 		added.preY = y;
 		queue.push(added);
 
 		renderLine(added.renderXMin +(added.renderXMax-added.renderXMin)/2,added.renderY,added.preX,added.preY);
-		renderNode(added.node.name,added.renderXMin+(added.renderXMax-added.renderXMin)/2,added.renderY,added.acummCost,added.aStarCost,"new");
+		renderNode(added.node.name,added.renderXMin+(added.renderXMax-added.renderXMin)/2,added.renderY,added.acummCost,added.aStarCost,0,"new");
 	}
+	renderNode(top.node.name,xMin+(xMax-xMin)/2,y,top.acummCost,top.aStarCost,expanded,"vis");
+
 }
 function isVisted(path,node)
 {
