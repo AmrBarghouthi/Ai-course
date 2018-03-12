@@ -42,12 +42,12 @@ function setup() {
 	}
 	dfs(getNodeFromName('S'),[],0,150,0,windowWidth);
 }
-function renderNode(name,x,y,cost)
+function renderNode(name,x,y,cost,bc)
 {
-	if(cost>bestCost)
+	if(cost>bc)
  		fill('rgb(255,0,0)');
 	else
-	 	fill(255);
+	 	fill(190);
 
 	noStroke();
 	ellipse(x, y, nodeRadius, nodeRadius);
@@ -55,18 +55,19 @@ function renderNode(name,x,y,cost)
 	textSize(64);
 	fill(0);
 	text(name,x,y)
+	textSize(80);
 	fill('rgb(0,255,0)')
 	textAlign(LEFT,CENTER);
 	text(str(cost),x+nodeRadius/2+2,y);
-	fill('rgb(0,0,255)');
+	fill(255);
 	textAlign(RIGHT,CENTER);
-	text(str(bestCost),x-nodeRadius/2-15,y )
+	text(str(bc),x-nodeRadius/2-15,y )
 
 }
 function renderLine(x1,y1,x2,y2) {
 
-	strokeWeight(5);
-	stroke(255);
+	strokeWeight(15);
+	stroke(0);
 	let d = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 	let vx = (x1-x2)/d;
 	let vy = (y1-y2)/d;
@@ -81,8 +82,9 @@ function dfs(node,path,cost,y,xMin,xMax,perX,perY)
 	let valid = [];
 	if(perX!= null && perY != null)
 		renderLine(xMin+(xMax-xMin)/2,y,perX,perY);
-	renderNode(node.name,xMin+(xMax-xMin)/2,y,cost);
 
+	let bc = bestCost;
+	 renderNode(node.name,xMin+(xMax-xMin)/2,y,cost,bc);
 	if(node == target)
 	{
 		bestCost = cost<bestCost?cost:bestCost;
@@ -107,6 +109,7 @@ function dfs(node,path,cost,y,xMin,xMax,perX,perY)
 		//if(ret)
 			//return true;
 	}
+	 renderNode(node.name,xMin+(xMax-xMin)/2,y,cost,bc);
 	return false;
 }
 

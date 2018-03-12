@@ -45,8 +45,8 @@ function renderNode(name,x,y)
 }
 function renderLine(x1,y1,x2,y2) {
 
-	strokeWeight(5);
-	stroke(255);
+	strokeWeight(15);
+	stroke(0);
 	let d = sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 	let vx = (x1-x2)/d;
 	let vy = (y1-y2)/d;
@@ -76,9 +76,11 @@ function dfs(node,path,y,xMin,xMax,perX,perY)
 	for(let i=0;i<valid.length;i++)
 	{
 		let ret  = dfs(valid[i],path.slice(),y+nodeRadius*2,xMin+subTreeWidth*i,xMin+subTreeWidth*(i+1),xMin+(xMax-xMin)/2,y);
+		renderNode(String.fromCharCode(node+65),xMin+(xMax-xMin)/2,y);
 		if(ret)
 			return true;
 	}
+
 	return false;
 }
 
