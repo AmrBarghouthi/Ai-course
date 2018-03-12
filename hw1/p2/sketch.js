@@ -98,7 +98,7 @@ function dfs(node,path,cost,y,xMin,xMax,perX,perY)
 			valid.push(node.edges[i]);
 	}
 
-	sort(valid);
+	valid.sort(nodeComp);
 	path.push(node);
 	let subTreeWidth = (xMax-xMin)/valid.length;
 	for(let i=0;i<valid.length;i++)
@@ -112,7 +112,15 @@ function dfs(node,path,cost,y,xMin,xMax,perX,perY)
 	 renderNode(node.name,xMin+(xMax-xMin)/2,y,cost,bc);
 	return false;
 }
-
+function nodeComp(a,b)
+{
+	console.log("compCall");
+	if(a.to.name < b.to.name)
+		return -1;
+	else if(a.to.name >b.to.name)
+		return 1;
+	return 0;
+}
 function draw() {
 	//background(52);
 }
